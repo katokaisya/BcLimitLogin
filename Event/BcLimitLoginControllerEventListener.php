@@ -54,13 +54,20 @@ class BcLimitLoginControllerEventListener extends BcControllerEventListener {
 			// ログイン履歴を取得
 			$limitCount = Configure::read('BcLimitLogin.LimitCount');
 			$limitTime = (int) Configure::read('BcLimitLogin.LimitTime');
+			$conditions = [
+				'key' => $key, //デフォルトはセッションキーで判定
+				'ip_address' => $ipAddress,
+				'login_status' => 0,
+				'modified >=' => date('Y-m-d H:i:s', strtotime(($limitTime * -1) . ' minutes')),
+			];
+			// ユーザーエージェントチェック
+			$userAgent = Configure::read('BcLimitLogin.user_agent_check');
+			if (!empty($userAgent)) {
+				$conditions['user_agent'] = $data['BcLimitLogin']['user_agent'];
+				unset($conditions['key']);
+			}
 			$count = $this->BcLimitLogin->find('count', [
-				'conditions' => [
-					'key' => $key,
-					'ip_address' => $ipAddress,
-					'login_status' => 0,
-					'modified >=' => date('Y-m-d H:i:s', strtotime(($limitTime * -1) . ' minutes')),
-				],
+				'conditions' => $conditions,
 				'recursive' => -1,
 				'cache' => false,
 			]);
