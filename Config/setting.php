@@ -14,7 +14,7 @@ $config['BcLimitLogin'] = [
 	'LimitCount' => 5,		// ログイン失敗の回数
 	'LimitTime' => 10,		// チェックする時間（分）
 	// チェックをセッションキーではなくユーザーエージェントで判定する場合trueにする
-	'user_agent_check' => true,
+	'user_agent_check' => false,
 ];
 
 /**
